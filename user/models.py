@@ -4,7 +4,7 @@ class User(models.Model):
     nickname        = models.CharField(max_length=100)
     email           = models.CharField(max_length=200)
     created_at      = models.DateTimeField(auto_now_add=True)
-    image_url       = models.URLField(max_length=4000)
+    image_url       = models.URLField(max_length=4000, null=True)
     refund_account  = models.ForeignKey('RefundAccount', on_delete=models.CASCADE, null=True)
 
     class Meta:
