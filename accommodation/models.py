@@ -22,17 +22,17 @@ class AccommodationImage(models.Model):
         db_table = 'accommodation_images'
 
 class AccommodationKeyword(models.Model):
-    keyword       = models.ForeignKey('Keyword', on_delete=models.CASCADE)
+    category      = models.ForeignKey('Category', on_delete=models.CASCADE)
     accommodation = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
     
     class Meta:
         db_table = 'accommodations_keywords'
 
-class Keyword(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=200)
 
     class Meta:
-        db_table = 'keywords'
+        db_table = 'categories'
 
 class Address(models.Model):
     latitude  = models.DecimalField(max_digits=10, decimal_places=6)
