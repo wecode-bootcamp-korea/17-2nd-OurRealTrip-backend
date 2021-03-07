@@ -10,12 +10,14 @@ class FlightSchedule(models.Model):
     departure_airport = models.ForeignKey('Airport', related_name='departure_airport', on_delete=models.CASCADE)
     arrival_airport   = models.ForeignKey('Airport', related_name='arrival_airport', on_delete=models.CASCADE)
     airline           = models.ForeignKey('Airline', on_delete=models.CASCADE)
+    time_frame        = models.IntegerField()
 
     class Meta:
         db_table = 'flight_schedules'
 
 class Airline(models.Model):
-    name = models.CharField(max_length=300)
+    name      = models.CharField(max_length=300)
+    image_url = models.URLField(max_length=4000)
 
     class Meta:
         db_table = 'airlines'
@@ -34,10 +36,10 @@ class FlightStatus(models.Model):
         db_table = 'flight_statuses'
 
 class FlightPrice(models.Model):
-    flight_schedule = models.ForeignKey('FlightSchedule', on_delete=models.CASCADE)
-    status          = models.ForeignKey('FlightStatus', on_delete=models.CASCADE, default=1) 
     price           = models.DecimalField(max_digits=30, decimal_places=2)
     remaining_seat  = models.IntegerField()
+    flight_schedule = models.ForeignKey('FlightSchedule', on_delete=models.CASCADE, related_name='flight_prices')
+    status          = models.ForeignKey('FlightStatus', on_delete=models.CASCADE, default=1) 
 
     class Meta:
         db_table = 'flight_prices'

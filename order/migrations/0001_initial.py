@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
                 ('serial_number', models.CharField(max_length=300)),
-                ('accommodation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accommodation.accommodation')),
+                ('room', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accommodation.room')),
                 ('order_status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.orderstatus')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.user')),
             ],

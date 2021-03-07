@@ -16,6 +16,7 @@ class Accommodation(models.Model):
 class AccommodationImage(models.Model):
     image_url     = models.URLField(max_length=4000) 
     accommodation = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
+    room          = models.ForeignKey('Room', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'accommodation_images'
@@ -68,18 +69,18 @@ class RoomOption(models.Model):
         db_table = 'rooms_options'
 
 class Review(models.Model):
-    content                = models.CharField(max_length=1000, null=True)
-    image_url              = models.URLField(max_length=4000, null=True)
-    location_rate          = models.DecimalField(max_digits=5, decimal_places=2)
-    sanitary_rate          = models.DecimalField(max_digits=5, decimal_places=2)
-    facility_rate          = models.DecimalField(max_digits=5, decimal_places=2)
-    hospitality_rate       = models.DecimalField(max_digits=5, decimal_places=2)
-    total_rate             = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    created_at             = models.DateTimeField(auto_now_add=True)
-    updated_at             = models.DateTimeField(auto_now=True)
-    user                   = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True)
-    accommodation          = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
-    accommodation_order_id = models.ForeignKey('order.AccommodationOrder', on_delete=models.SET_NULL, null=True)
+    content             = models.CharField(max_length=1000, null=True)
+    image_url           = models.URLField(max_length=4000, null=True)
+    location_rate       = models.DecimalField(max_digits=5, decimal_places=2)
+    sanitary_rate       = models.DecimalField(max_digits=5, decimal_places=2)
+    facility_rate       = models.DecimalField(max_digits=5, decimal_places=2)
+    hospitality_rate    = models.DecimalField(max_digits=5, decimal_places=2)
+    total_rate          = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    created_at          = models.DateTimeField(auto_now_add=True)
+    updated_at          = models.DateTimeField(auto_now=True)
+    user                = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True)
+    accommodation       = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
+    accommodation_order = models.ForeignKey('order.AccommodationOrder', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         db_table = 'reviews'
@@ -94,7 +95,6 @@ class UnavailableDate(models.Model):
     start_date    = models.DateField()
     end_date      = models.DateField()
     room          = models.ForeignKey('Room', on_delete=models.CASCADE)
-    accommodation = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'unavailable_dates'

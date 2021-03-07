@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='review',
-            name='accommodation_order_id',
+            name='accommodation_order',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='order.accommodationorder'),
         ),
         migrations.AddField(
@@ -29,6 +29,11 @@ class Migration(migrations.Migration):
             model_name='accommodationimage',
             name='accommodation',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accommodation.accommodation'),
+        ),
+        migrations.AddField(
+            model_name='accommodationimage',
+            name='room',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accommodation.room'),
         ),
         migrations.AddField(
             model_name='accommodation',

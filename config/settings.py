@@ -69,7 +69,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = my_settings.DATABASE
+DATABASES = my_settings.DATABASES
 
 
 # Password validation
