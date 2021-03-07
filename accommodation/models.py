@@ -101,4 +101,3 @@ class UnavailableDate(models.Model):
 
     class Meta:
         db_table = 'unavailable_dates'
-
