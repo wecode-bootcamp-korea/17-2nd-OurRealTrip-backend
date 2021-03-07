@@ -436,3 +436,4 @@ my_settings.py
 .pycharm
 *.csv
 csv/
+db_uploader.py

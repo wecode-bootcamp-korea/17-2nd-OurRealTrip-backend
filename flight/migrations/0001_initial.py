@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=300)),
+                ('image_url', models.URLField(max_length=4000)),
             ],
             options={
                 'db_table': 'airlines',
@@ -56,6 +57,7 @@ class Migration(migrations.Migration):
                 ('airline', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flight.airline')),
                 ('arrival_airport', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='arrival_airport', to='flight.airport')),
                 ('departure_airport', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='departure_airport', to='flight.airport')),
+                ('time_frame', models.IntegerField()),
             ],
             options={
                 'db_table': 'flight_schedules',
@@ -67,7 +69,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('price', models.DecimalField(decimal_places=2, max_digits=30)),
                 ('remaining_seat', models.IntegerField()),
-                ('flight_schedule', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flight.flightschedule')),
+                ('flight_schedule', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='flight_prices', to='flight.flightschedule')),
                 ('status', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='flight.flightstatus')),
             ],
             options={
