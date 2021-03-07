@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.test          import TestCase,Client
 
@@ -19,6 +20,8 @@ from .models import (
     RoomOption,
     Option
 )
+
+from freezegun            import freeze_time
 
 from accommodation.views  import AccommodationListView, AccommodationDetailView
 
@@ -264,8 +267,8 @@ class AccommodationDetailTest(TestCase):
             location_rate          = '3.4',
             sanitary_rate          = '4.5',
             facility_rate          = '3.2',
-            hospitality_rate       = '128.00001',
-            total_rate             = '128.00002',
+            hospitality_rate       = '3.8',
+            total_rate             = '4.1',
             user_id                = 1,
             accommodation_id       = 1,
             accommodation_order_id = 1
@@ -282,6 +285,11 @@ class AccommodationDetailTest(TestCase):
             option_id = 1,
             room_id   = 1
         )
+
+        global freezer
+
+        freezer = freeze_time("2012-01-14 12:00:01")
+        freezer.start()
 
     def tearDown(self):
         Accommodation.objects.all().delete()
@@ -311,12 +319,14 @@ class AccommodationDetailTest(TestCase):
             'review_number' : 1,
             'room'          : [{
                 'name'           : '스튜디오1',
-                'option'         : ['WIFI'],
                 'price'          : '89000.00',
                 'basic_capacity' : 2,
                 'max_capacity'   : 3,
-                'extra_price'    : '0.00',
-                'image'          : ['image01/wecode.com'],
+                'image'          : [
+                    {
+                        'image_url' : 'image01/wecode.com'
+                    }
+                ],
             }],
             'main_image'    : 'image01/wecode.com',
             'address'       : '제주특별자치도 제주시 한림읍 귀덕리 1836-3',
@@ -324,15 +334,24 @@ class AccommodationDetailTest(TestCase):
                 'name'           : '허민지',
                 'image_url'      : 'null'
             },
-            'content'       : 'null'
+            'review_list'   : [
+                {
+                    'user'        : '정희영',
+                    'created_at'  : '2012-01-14T12:00:01',
+                    'content'     : '우리 팀 멋있다!',
+                    'total_rate'  : '4.10'
+                }
+            ] 
         }
-
         self.assertEqual(response.json(), {'data': data})
         self.assertEqual(response.status_code, 200)
+        freezer.stop()
 
     def test_accommodation_detail_fail(self):
         accommodation_id = 2
         response         = client.get(f'/accommodation/{accommodation_id}')
 
         self.assertEqual(response.json(), {'message': 'INVALID_ACCOMMODATION_ID'})
+
         self.assertEqual(response.status_code, 400)
+    

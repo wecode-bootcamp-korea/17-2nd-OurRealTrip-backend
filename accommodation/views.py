@@ -102,16 +102,9 @@ class AccommodationDetailView(View):
                 'review_number' : review_count,
                 'room'          : [{
                     'name'           : room.name,
-                    'option'         : [
-                        {
-                            'name' : option.name,
-                            'quantity': option.roomoption_set.filter(room=room.id)[0].quantity
-                        } for option in room.option.all()
-                    ],
                     'price'          : room.price,
                     'basic_capacity' : room.basic_capacity,
                     'max_capacity'   : room.maximum_capacity,
-                    'extra_price'    : room.extra_price,
                     'image'          : [
                         {
                             'image_url' : image.image_url 
@@ -124,13 +117,11 @@ class AccommodationDetailView(View):
                     'name'           : accommodation.host.name,
                     'image_url'      : accommodation.host.image_url
                 },
-                'content'       : accommodation.content,
                 'review_list'   : [
                     {
                         'user'        : review.user.nickname,
                         'created_at'  : review.created_at,
                         'content'     : review.content,
-                        'image_url'   : review.image_url,
                         'total_rate'  : review.total_rate
                     } for review in accommodation.review_set.all()
                 ]
