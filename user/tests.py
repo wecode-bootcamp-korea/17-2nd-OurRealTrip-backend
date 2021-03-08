@@ -1,39 +1,99 @@
-import json
+import json, jwt
 
 from django.test    import TestCase, Client
+from unittest.mock  import patch, MagicMock
 
+from my_settings    import SECRET_KEY, ALGORITHM
 from user.models    import User
 
 class UserSignInTests(TestCase):
-    def setUp(self):
-        User.objects.create(nickname='nickname03', email='user03@ourrealtrip.com')
+    @classmethod
+    def setUpClass(cls):
+        User.objects.create(
+            kakao_id = 987654321,
+            email    = 'user@ourrealtrip.com',
+            nickname = 'user'
+        )
 
-    def tearDown(self):
-        return super().tearDown()
+    @classmethod
+    def tearDownClass(cls):
+        User.objects.all().delete()
 
-    def test_users_table_data(self):
-        email = User.objects.get(nickname='nickname03').email
-        self.assertEqual(email, 'user03@ourrealtrip.com')
+    @patch('user.views.requests')
+    def test_signup_success(self, mocked_request):
+        class FakeKakao():
+            def json(self):
+                return {
+                    'id'            : 123456789,
+                    'connected_at'  : '2021-03-07T15:18:34Z',
+                    'properties'    : {'nickname': 'test'},
+                    'kakao_account' : {
+                        'profile_needs_agreement': False,
+                        'profile'                : {'nickname': 'test'},
+                        'has_email'              : True,
+                        'email_needs_agreement'  : False,
+                        'is_email_valid'         : True,
+                        'is_email_verified'      : True,
+                        'email'                  : 'test@ourrealtrip.com'
+                    }
+                }
 
-    def test_signin_success(self):
-        data = {'email' : 'user03@ourrealtrip.com'}
-        response = self.client.post('/user/signin', json.dumps(data), content_type='application/json')
+        mocked_request.get = MagicMock(return_value = FakeKakao())
+
+        data     = ({'HTTP_AUTHORIZATION': '123456789'})
+        response = self.client.get('/user/sign', content_type = 'application/json', **data)
+
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 
+            {
+                'message' : 'SUCCESS', 
+                'access_token' : jwt.encode(
+                    {'user_id' : User.objects.latest('id').id}, 
+                    SECRET_KEY, 
+                    algorithm=ALGORITHM)
+            }
+        )
 
-    def test_signin_invalid_email(self):
-        data = {'email' : 'user03@gmail.com'}
-        response = self.client.post('/user/signin', json.dumps(data), content_type='application/json')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'MESSAGE' : 'INVALID_EMAIL'})
+    @patch('user.views.requests')
+    def test_signin_success(self, mocked_request):
+        class FakeKakao():
+            def json(self):
+                return {
+                    'id'            : 987654321,
+                    'connected_at'  : '2021-03-07T15:18:34Z',
+                    'properties'    : {'nickname': 'user'},
+                    'kakao_account' : {
+                        'profile_needs_agreement': False,
+                        'profile'                : {'nickname': 'user'},
+                        'has_email'              : True,
+                        'email_needs_agreement'  : False,
+                        'is_email_valid'         : True,
+                        'is_email_verified'      : True,
+                        'email'                  : 'user@ourrealtrip.com'
+                    }
+                }
 
-    def test_signin_invalid_key(self):
-        data = {'e' : 'user03@ourrealtrip.com'}
-        response = self.client.post('/user/signin', json.dumps(data), content_type='application/json')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'MESSAGE' : 'INVALID_KEY'})
+        mocked_request.get = MagicMock(return_value = FakeKakao())
 
-    def test_signin_no_request_body(self):
-        data = {'email' : 'user03@ourrealtrip.com'}
-        response = self.client.post('/user/signin')
+        data     = ({'HTTP_AUTHORIZATION': '987654321'})
+        response = self.client.get('/user/sign', content_type = 'application/json', **data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 
+            {
+                'message' : 'SUCCESS', 
+                'access_token' : jwt.encode(
+                    {'user_id' : User.objects.get(kakao_id='987654321').id},
+                    SECRET_KEY, 
+                    algorithm=ALGORITHM
+                )
+            }
+        )
+        
+
+    def test_sign_fail_with_invalid_token(self):
+        data     = ({'HTTP_AUTHORIZATION': 'invalid_token'})
+        response = self.client.get('/user/sign', content_type = 'application/json', **data)
+
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'MESSAGE' : 'NO_REQUEST_BODY'})
+        self.assertEqual(response.json(), {'message' : 'INVALID_TOKEN'})
