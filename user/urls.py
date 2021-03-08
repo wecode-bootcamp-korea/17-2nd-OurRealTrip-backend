@@ -1,7 +1,7 @@
-from django.urls    import path, include
-
-from user.views     import SigninView
+from django.urls import path
+from user.views import SignView
 
 urlpatterns = [
-    path('/signin', SigninView.as_view()),
+    path('/sign', SignView.as_view()),
 ]
+

@@ -5,6 +5,7 @@ class User(models.Model):
     email           = models.CharField(max_length=200)
     created_at      = models.DateTimeField(auto_now_add=True)
     image_url       = models.URLField(max_length=4000, null=True)
+    kakao_id        = models.CharField(max_length=200)
     refund_account  = models.ForeignKey('RefundAccount', on_delete=models.CASCADE, null=True)
 
     class Meta:
