@@ -31,6 +31,7 @@ class FlightView(View):
             }
 
             flight_info = [{
+                'id'            : flight.id,
                 'airline'       : flight.airline.name,
                 'airline_logo'  : flight.airline.image_url,
                 'flightCode'    : flight.flight_code,
