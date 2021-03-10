@@ -99,6 +99,7 @@ class FlightListTest(TestCase):
             'arrivalAirportCode'   : 'CJU',
             'flights'              : [
                 {
+                    'id'           : 1,
                     'airline'      : 'wecode',
                     'airline_logo' : 'https://wecode.co.kr/',
                     'flightCode'   : 'WE001',
@@ -110,6 +111,7 @@ class FlightListTest(TestCase):
                     'price'        : '38900.00'
                 },
                 {
+                    'id'           : 2,
                     'airline'      : 'wecode',
                     'airline_logo' : 'https://wecode.co.kr/',
                     'flightCode'   : 'WE002',
@@ -135,6 +137,7 @@ class FlightListTest(TestCase):
             'arrivalAirportCode'   : 'CJU',
             'flights'              : [
                 {
+                    'id'           : 2,
                     'airline'      : 'wecode',
                     'airline_logo' : 'https://wecode.co.kr/',
                     'flightCode'   : 'WE002',
@@ -146,6 +149,7 @@ class FlightListTest(TestCase):
                     'price'        : '36900.00'
                 },
                 {
+                    'id'           : 1,
                     'airline'      : 'wecode',
                     'airline_logo' : 'https://wecode.co.kr/',
                     'flightCode'   : 'WE001',
@@ -171,6 +175,7 @@ class FlightListTest(TestCase):
             'arrivalAirportCode'   : 'CJU',
             'flights'              : [
                 {
+                    'id'           : 1,
                     'airline'      : 'wecode',
                     'airline_logo' : 'https://wecode.co.kr/',
                     'flightCode'   : 'WE001',
@@ -211,5 +216,3 @@ class FlightListTest(TestCase):
     def test_flight_get_not_found(self):
         response = self.client.get('/flighdt?departure=GMP&arrival=CJU&date=2021-03-14&sort=price:asc&timeOption=1"', content_type = 'application/json')
         self.assertEqual(response.status_code, 404)
-
-    
