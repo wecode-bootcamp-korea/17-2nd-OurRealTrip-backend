@@ -1,6 +1,7 @@
-from django.db import models
-from user.models import User, RefundAccount
-from order.models import OrderStatus, AccommodationOrder
+from django.db      import models
+
+from user.models    import User, RefundAccount
+from order.models   import OrderStatus, AccommodationOrder
 
 class Accommodation(models.Model):
     name        = models.CharField(max_length=100)
@@ -58,7 +59,7 @@ class Room(models.Model):
     basic_capacity   = models.IntegerField(default=1) 
     extra_price      = models.DecimalField(max_digits=30, decimal_places=2, default=0)
     accommodation    = models.ForeignKey('Accommodation', on_delete=models.CASCADE)
-    option = models.ManyToManyField('Option', through='RoomOption')
+    option           = models.ManyToManyField('Option', through='RoomOption')
 
     class Meta:
         db_table = 'rooms'
