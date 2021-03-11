@@ -21,7 +21,7 @@ class AccommodationOrder(models.Model):
     class Meta:
         db_table = 'accommodation_orders'
 
-class FlightOrders(models.Model):
+class FlightOrder(models.Model):
     total_price     = models.DecimalField(max_digits=30, decimal_places=2)
     passenger       = models.IntegerField(default=1)
     created_at      = models.DateTimeField(auto_now_add=True)
