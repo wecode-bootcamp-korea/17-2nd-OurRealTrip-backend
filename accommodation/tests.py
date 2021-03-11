@@ -45,22 +45,22 @@ class AccommodationListTest(TestCase):
             image_url         = 'image01/wecode.com',
             refund_account_id = 1
         )
-        
+
         Address.objects.create(
-            id        = 1, 
+            id        = 1,
             name      = '제주특별자치도 제주시 한림읍 귀덕리 1836-3',
-            longitude = '123.00001', 
+            longitude = '123.00001',
             latitude  = '192.00001'
         )
 
         Host.objects.create(
             id        = 1,
-            name      ='허민지', 
+            name      ='허민지',
             image_url ='null'
         )
 
         self.city = City.objects.create(
-            id   = 1, 
+            id   = 1,
             name = '제주'
         )
 
@@ -68,21 +68,21 @@ class AccommodationListTest(TestCase):
             id   = 1,
             name = '호텔'
         )
-        
+
         Accommodation.objects.create(
             id          = 1,
             name        = '토토 게스트하우스',
-            description = '파도를 감상하며 명상하기 좋은 게스트하우스', 
-            rate        = '4.20', 
-            content     = 'null', 
-            address_id  = 1, 
-            host_id     = 1, 
-            city_id     = 1, 
+            description = '파도를 감상하며 명상하기 좋은 게스트하우스',
+            rate        = '4.20',
+            content     = 'null',
+            address_id  = 1,
+            host_id     = 1,
+            city_id     = 1,
             category_id = 1
         )
 
         Room.objects.bulk_create([
-            Room( 
+            Room(
                 id               = 1,
                 name             = '스튜디오1',
                 price            = '89000.00',
@@ -91,8 +91,8 @@ class AccommodationListTest(TestCase):
                 accommodation_id = 1,
                 extra_price      = '0'
             ),
-            
-            Room( 
+
+            Room(
                 id               = 2,
                 name             = '패밀리 스위트룸',
                 price            = '222000.00',
@@ -185,22 +185,22 @@ class AccommodationDetailTest(TestCase):
             image_url         = 'image01/wecode.com',
             refund_account_id = 1
         )
-        
+
         Address.objects.create(
-            id        = 1, 
+            id        = 1,
             name      = '제주특별자치도 제주시 한림읍 귀덕리 1836-3',
-            longitude = '123.00001', 
+            longitude = '123.00001',
             latitude  = '192.00001'
         )
 
         Host.objects.create(
             id        = 1,
-            name      ='허민지', 
+            name      ='허민지',
             image_url ='null'
         )
 
         self.city = City.objects.create(
-            id   = 1, 
+            id   = 1,
             name = '제주'
         )
 
@@ -208,16 +208,16 @@ class AccommodationDetailTest(TestCase):
             id   = 1,
             name = '호텔'
         )
-        
+
         accommodation = Accommodation.objects.create(
             id          = 1,
             name        = '토토 게스트하우스',
-            description = '파도를 감상하며 명상하기 좋은 게스트하우스', 
-            rate        = '4.20', 
-            content     = 'null', 
-            address_id  = 1, 
-            host_id     = 1, 
-            city_id     = 1, 
+            description = '파도를 감상하며 명상하기 좋은 게스트하우스',
+            rate        = '4.20',
+            content     = 'null',
+            address_id  = 1,
+            host_id     = 1,
+            city_id     = 1,
             category_id = 1
         )
 
@@ -307,7 +307,7 @@ class AccommodationDetailTest(TestCase):
         UnavailableDate.objects.all().delete()
         RoomOption.objects.all().delete()
 
-    def test_accommodation_list_detail_success(self): 
+    def test_accommodation_list_detail_success(self):
         accommodation_id = 1
         response         = client.get(f'/accommodation/{accommodation_id}')
 

@@ -1,11 +1,13 @@
 import jwt
+from decimal import Decimal
 
-from django.test    import TestCase, Client
+from django.test          import TestCase, Client
 
-from my_settings    import SECRET_KEY, ALGORITHM
-from user.models    import User
-from flight.models  import Airline, Airport, FlightSchedule, FlightStatus, FlightPrice
-from order.models   import FlightOrder, OrderStatus
+from my_settings          import SECRET_KEY, ALGORITHM
+from user.models          import User
+from flight.models        import Airline, Airport, FlightSchedule, FlightStatus, FlightPrice
+from order.models         import FlightOrder, OrderStatus, AccommodationOrder
+from accommodation.models import Accommodation, Address, Category, City, Host, Room
 
 class FlightRoundTripOrderTest(TestCase):
     maxDiff = None
@@ -108,8 +110,8 @@ class FlightRoundTripOrderTest(TestCase):
     def test_flight_order_post_success(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -125,8 +127,8 @@ class FlightRoundTripOrderTest(TestCase):
     def test_flight_order_post_success_data(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -159,8 +161,8 @@ class FlightRoundTripOrderTest(TestCase):
     def test_flight_order_post_invalid_passenger(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -169,20 +171,20 @@ class FlightRoundTripOrderTest(TestCase):
             'returningFlight' : 2,
         })
         response = self.client.post(
-            '/order/flight', 
-            data=data, 
-            **headers, 
+            '/order/flight',
+            data=data,
+            **headers,
             content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'message' : 'INVALID_PASSENGER'})
-        
+
     def test_flight_order_post_invalid_key(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -191,9 +193,9 @@ class FlightRoundTripOrderTest(TestCase):
             'returningFlight' : 2,
         })
         response = self.client.post(
-            '/order/flight', 
-            data=data, 
-            **headers, 
+            '/order/flight',
+            data=data,
+            **headers,
             content_type='application/json'
         )
 
@@ -203,8 +205,8 @@ class FlightRoundTripOrderTest(TestCase):
     def test_flight_order_post_need_value(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -213,9 +215,9 @@ class FlightRoundTripOrderTest(TestCase):
             'returningFlight' : 2,
         })
         response = self.client.post(
-            '/order/flight', 
-            data=data, 
-            **headers, 
+            '/order/flight',
+            data=data,
+            **headers,
             content_type='application/json'
         )
 
@@ -225,8 +227,8 @@ class FlightRoundTripOrderTest(TestCase):
     def test_flight_order_post_invalid_flight_id(self):
         headers  = ({
             'HTTP_AUTHORIZATION' : jwt.encode({
-                'user_id' : User.objects.get(id=1).id}, 
-                SECRET_KEY, 
+                'user_id' : User.objects.get(id=1).id},
+                SECRET_KEY,
                 algorithm=ALGORITHM)
         })
         data     = ({
@@ -235,11 +237,181 @@ class FlightRoundTripOrderTest(TestCase):
             'returningFlight' : 2,
         })
         response = self.client.post(
-            '/order/flight', 
-            data=data, 
-            **headers, 
+            '/order/flight',
+            data=data,
+            **headers,
             content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'message' : 'INVALID_FLIGHT_ID'})
+
+
+class AoccommodationOrderTest(TestCase):
+    maxDiff = None
+
+    @classmethod
+    def setUpClass(cls):
+        User.objects.create(
+            id       = 2,
+            nickname = 'test',
+            email    = 'test@ourrealtrip.com',
+            kakao_id = 123456,
+        )
+
+        OrderStatus.objects.create(
+            id   = 1,
+            name = '결제 대기'
+        )
+
+        Address.objects.create(
+            id        = 1,
+            latitude  = 33.4103113,
+            longitude = 1268974265,
+            name      = "제주특별자치도 서귀포시 성산읍 온평서로 28",
+        )
+
+        Host.objects.create(
+            id        = 1,
+            name      = "이소헌",
+            image_url = "https://wecode.co.kr/static/media/lee-so.39e2a003.png",
+        )
+
+        City.objects.create(
+            id   = 1,
+            name = "제주",
+        )
+
+        Category.objects.create(
+            id   = 1,
+            name = '호텔',
+        )
+
+        Accommodation.objects.create(
+            id          = 1,
+            name        = "도시 호텔 제주",
+            rate        = 3.7,
+            address_id  = 1,
+            host_id     = 1,
+            city_id     = 1,
+            category_id = 1,
+        )
+
+        Room.objects.bulk_create([
+            Room(
+                id               = 1,
+                name             = "방",
+                price            = 100000.00,
+                maximum_capacity = 4,
+                basic_capacity   = 2,
+                accommodation_id = 1,
+            )])
+
+    @classmethod
+    def tearDownClass(cls):
+        Address.objects.all().delete()
+        OrderStatus.objects.all().delete()
+        Host.objects.all().delete()
+        City.objects.all().delete()
+        Category.objects.all().delete()
+        Accommodation.objects.all().delete()
+
+    def test_accommodation_order_post_success_data(self):
+        headers = ({
+            'HTTP_AUTHORIZATION': jwt.encode({
+                'user_id': User.objects.get(id=2).id},
+                SECRET_KEY,
+                algorithm=ALGORITHM)
+        })
+
+        data     = ({
+            'totalPrice': 100000.00,
+            'guest'     : 2,
+            'startDate' : '2021-04-24',
+            'endDate'   : '2021-04-27',
+            'room'      :1,
+        })
+
+        response = self.client.post(
+            '/order/accommodation',
+            data=data,
+            **headers,
+            content_type='application/json'
+        )
+        self.assertEqual(response.json(), {'message': 'SUCCESS'})
+        self.assertEqual(response.status_code, 200)
+
+        order = AccommodationOrder.objects.all()[0]
+        data  = {
+            'totalPrice'  : order.total_price,
+            'guest'       : order.guest,
+            'start_date'  : str(order.start_date),
+            'end_date'    : str(order.end_date),
+            'room'        : order.room_id,
+            'order_status': order.order_status_id,
+            'user'        : order.user_id,
+        }
+
+        self.assertEqual(
+            data, {
+                'totalPrice'  : 100000.00,
+                'guest'       : 2,
+                'start_date'  : '2021-04-24',
+                'end_date'    : '2021-04-27',
+                'room'        : 1,
+                'order_status': 1,
+                'user'        : 2,
+            }
+        )
+
+    def test_accommodation_order_post_room_does_not_exist_error(self):
+        headers = ({
+            'HTTP_AUTHORIZATION': jwt.encode({
+                'user_id': User.objects.get(id=2).id},
+                SECRET_KEY,
+                algorithm=ALGORITHM)
+        })
+
+        data = ({
+            'totalPrice' : 100000.00,
+            'guest'      : 2,
+            'startDate'  : '2021-04-24',
+            'endDate'    : '2021-04-27',
+            'room'       : 1000,
+        })
+
+        response = self.client.post(
+            '/order/accommodation',
+            data=data,
+            **headers,
+            content_type='application/json'
+        )
+        self.assertEqual(response.json(), {'message': 'ROOM_DOES_NOT_EXIST'})
+        self.assertEqual(response.status_code, 400)
+
+    def test_accommodation_order_post_order_status_does_not_exist_error(self):
+        OrderStatus.objects.get(id=1).delete()
+
+        headers = ({
+            'HTTP_AUTHORIZATION': jwt.encode({
+                'user_id': User.objects.get(id=2).id},
+                SECRET_KEY,
+                algorithm=ALGORITHM)
+        })
+
+        data = ({
+            'totalPrice' : 100000.00,
+            'guest'      : 2,
+            'startDate'  : '2021-04-24',
+            'endDate'    : '2021-04-27',
+            'room'       : 1,
+        })
+
+        response = self.client.post(
+            '/order/accommodation',
+            data=data,
+            **headers,
+            content_type='application/json'
+        )
+        self.assertEqual(response.json(), {'message': 'ORDER_STATUS_DOES_NOT_EXIST'})
+        self.assertEqual(response.status_code, 400)

@@ -48,23 +48,24 @@ class AccommodationListView(View):
         rate         = request.GET.get('rate', 0.00)
         room_option  = request.GET.getlist('roomOption', None)
 
-        q = (Q(city__name=city) 
-            & Q(room__maximum_capacity__gte=guest) 
-            & Q(rate__gte=rate) 
+        q = (Q(city__name=city)
+            & Q(room__maximum_capacity__gte=guest)
+            & Q(rate__gte=rate)
             & ~Q(room__unavailabledate__start_date__gte=start_date, room__unavailabledate__end_date__lte=end_date)
         )
 
         if category_id:
             q &= Q(category__id=category_id)
 
-        if room_option:
-            q &= Q(room__option__name__in=room_option)
-
         accommodations = Accommodation.objects\
             .select_related('address','category','city')\
             .prefetch_related('accommodationimage_set','room_set','review_set')\
             .filter(q)\
             .annotate(count=Count('review'), price=Min('room__price'))
+
+        if room_option:
+            for r in room_option:
+                accommodations = accommodations.filter(room__option__name=r)
 
         ordering_options = {
             'favored' : '-count',
@@ -83,7 +84,7 @@ class AccommodationListView(View):
                 'review'      : accommodation.count,
                 'price'       : accommodation.price,
                 'url'         : accommodation.accommodationimage_set.all()[0].image_url,
-            } for accommodation in accommodations.order_by(ordering_options[ordering]) 
+            } for accommodation in accommodations.order_by(ordering_options[ordering])
         ]
 
         return JsonResponse({'data': data}, status=200)
