@@ -9,11 +9,12 @@ class FlightView(View):
     def get(self, request):
         try:
             data        = request.GET
-            arrival     = data.get('arrival')
-            date        = data.get('date')
-            departure   = data.get('departure')
-            sort        = data.get('sort')
+            arrival     = data['arrival']
+            date        = data['date']
+            departure   = data['departure']
+            sort        = data['sort']
             time_option = data.getlist('timeOption')
+            passenger   = data['passenger']
 
             flights = FlightSchedule.objects.select_related(
                 'departure_airport',
@@ -22,7 +23,10 @@ class FlightView(View):
                 departure_airport__code=departure,
                 arrival_airport__code=arrival,
                 departure_date=date,
-                ).filter(time_frame__in=time_option)
+                ).filter(
+                    time_frame__in=time_option,
+                    flight_prices__remaining_seat__gte=passenger,
+                )
 
             sort_option = {
                 'departureTime:asc'  : 'departure_time',
