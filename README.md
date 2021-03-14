@@ -1,4 +1,4 @@
-![마이리얼트립로고](https://user-images.githubusercontent.com/65124480/111019024-f37eba80-83ff-11eb-8da1-f597f0c5958b.png)
+![our-real-trip](https://user-images.githubusercontent.com/75108432/111068776-848f8780-850d-11eb-8f2c-6f7c5949f210.png)
 
 ## 마이리얼트립 기업 소개
 
