@@ -437,5 +437,4 @@ my_settings.py
 *.csv
 csv/
 db_uploader.py
-ourrealtrip.sql
 .idea/
